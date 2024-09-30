@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="p-3 mb-3 border border-info">
+  <h4 class="mb-4 text-decoration-underline">メニュー</h4>
+  <ul class="list-group">
+    <li class="list-group-item"><a href="{% url 'numpy' %}">Numpyとは</a></li>
+    <li class="list-group-item"><a href="{% url 'matplotlib' %}">Matplotlibとは</a></li>
+    <li class="list-group-item"><a href="{% url 'pandas' %}">pandasとは</a></li>
+    <li class="list-group-item"><a href="{% url 'scikit-learn' %}">scikit-learnとは</a></li>
+    <li class="list-group-item"><a href="{% url 'seaborn' %}">seabornとは</a></li>
+  </ul>
+</section>
+{% endblock content %}

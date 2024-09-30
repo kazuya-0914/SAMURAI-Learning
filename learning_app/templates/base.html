@@ -1,0 +1,34 @@
+{% load static %}
+{% load django_bootstrap5 %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }}</title>
+  {% bootstrap_css %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <div class="container m-auto">
+    <header class="p-3">
+      <h4>{{ heading }}</h4>
+    </header>
+
+    <main class="p-3 border border-secondary">
+      {% block content %}
+      {% endblock content %}
+    </main>
+
+    <footer class="p-3 text-center">
+      <a href="{% url 'top' %}" class="me-2 btn btn-primary">メニュー</a>
+      <a href="{% url 'numpy' %}" class="me-2 btn btn-primary">NumPy</a>
+      <a href="{% url 'matplotlib' %}" class="me-2 btn btn-primary">Matplotlib</a>
+      <a href="{% url 'pandas' %}" class="me-2 btn btn-primary">pandas</a>
+      <a href="{% url 'scikit-learn' %}" class="me-2 btn btn-primary">scikit-learn</a>
+      <a href="{% url 'seaborn' %}" class="me-2 btn btn-primary">seaborn</a>
+    </footer>
+  </div>
+{% bootstrap_javascript %}
+</body>
+</html>

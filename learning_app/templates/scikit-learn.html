@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if val %}
+<section class="p-3 mb-3 border border-info">
+  <h4 class="mb-2 text-decoration-underline">通常処理</h4>
+  {{ val|safe }}
+</section>
+{% endif %}
+
+{% if pre %}
+<section class="p-3 mb-3 border border-info">
+  <h4 class="mb-2 text-decoration-underline">preタグ処理</h4>
+  <pre>
+{{ pre|safe }}
+  </pre>
+</section>
+{% endif %}
+
+{% if url %}
+<section class="p-3 border border-info">
+  <h4 class="mb-2 text-decoration-underline">画像処理</h4>
+  <img src="{{ url }}" alt="画像処理"> 
+</section>
+{% endif %}
+{% endblock content %}
