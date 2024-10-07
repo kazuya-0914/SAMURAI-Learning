@@ -1,8 +1,8 @@
-import os
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
+import japanize_matplotlib
 
 from typing import Any
 from django.http import HttpResponse
@@ -10,11 +10,9 @@ from PIL import Image
 from io import BytesIO
 from io import StringIO
 
-from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score
-from sklearn.datasets import fetch_california_housing
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import StandardScaler
 
 from django.shortcuts import render
 from django.views.generic import TemplateView
@@ -43,138 +41,102 @@ class BaseContext:
         context.update(params)
         return context
 
-# --- トップページ
-class TopView(BaseContext, TemplateView):
-    template_name = "top.html"
-    heading = '機械学習'
-    val = ''
-    pre = ''
-    url = ''
-    
-# --- NumPy   
-class NumPyView(BaseContext, TemplateView):
-    template_name = "numpy.html"
-    heading = 'NumPyとは'
-    val = ''
-    pre = ''
-    url = '/image/'
-
-# --- NumPy（画像読み込み用）
-def image_view(request):
-    # 画像ファイルの絶対パスを取得
-    image_path = os.path.join('static', 'images', 'camera.jpg')
-    # 画像を読み込む
-    im = Image.open(image_path)
-    im = im.resize((im.width //2, im.height //2))
-    # PIL形式からNumPy形式に変換
-    im_np = np.asarray(im)
-    negative_im_np = 255 - im_np
-    negative_im = Image.fromarray(negative_im_np)
-
-    buffer = BytesIO()
-    negative_im.save(buffer, format="JPEG")
-    image_data = buffer.getvalue()
-
-    return HttpResponse(image_data, content_type="image/jpeg")
-
-# --- Matplotlib
-class MatplotlibView(BaseContext, TemplateView):
-    # 教材コード（編集箇所）
-    x = np.array([1, 2, 3, 4, 5])
-    y = np.array([100, 120, 150, 200, 160])
-    # label = ["昆布", "うめ" , "鮭", "カルビ", "すじこ"]
-
-    # 画像をバイト配列に保存
-    # plt.figure(figsize=(12, 10))
-
-    # プロット（編集箇所）
-    # plt.title('おにぎりの具ごとの値段') # matplotlib_fontja使用
-    # plt.bar(x, y, tick_label=label)
-
-    # プロット実行
-    plt.tight_layout()
-
-    # メモリ上に画像を保存
-    buffer = io.BytesIO()
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
-    string = base64.b64encode(buffer.read())
-
-    # コンテキスト
-    template_name = "matplotlib.html"
-    heading = 'Matplotlibとは'
-    val = ''
-    pre = ''
-    url = 'data:image/png;base64,' + urllib.parse.quote(string)
-
-# --- pandas
-class PandasView(BaseContext, TemplateView):
+# --- 回帰（２）
+class Regression_2_View(BaseContext, TemplateView):
     # 教材コード
-    category_df = pd.read_csv('learning_app/category.csv')
-    df = pd.read_csv('learning_app/sample_pandas_6.csv')
-    df = pd.merge(df, category_df[['商品番号', 'カテゴリー']], how='inner', on='商品番号')
+    df = pd.read_csv('learning_app/california_housing_cleansing.csv')
+    df = df.drop(columns = ['Unnamed: 0'])
+    # val = df.head().to_html()
 
-    # コンテキスト
-    template_name = "pandas.html"
-    heading = 'pandasとは'
-    # val = ''
-    val = df.to_html
-    pre = ''
-    # pre = category_df.to_string()
-    # pre = df['単価'].apply(tax).to_string() # to_string()を記載しないとif文でエラーが発生
-    url = ''
+    # 多重共線性の対処
+    val = df.drop(columns=['住宅価格']).corr().to_html()
 
-# --- scikit-learn
-class ScikitLearnView(BaseContext, TemplateView):
-    # 教材コード
-    dataset = load_wine()
-    dataset.feature_names
-    df = pd.DataFrame(data=dataset.data, columns=dataset.feature_names)
-    X = dataset.data
-    y = dataset.target
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=5)
-    model = DecisionTreeClassifier(random_state=3)
-    model.fit(X_train, y_train)
-    y_pred = model.predict(X_test)
+    # ndarrayへの変換
+    X = df.drop(columns=['住宅価格']).to_numpy()
+    y = df['住宅価格'].to_numpy()
 
-    X_real = np.array([
-        [13, 1.6, 2.2, 16, 118, 2.6, 2.9, 0.21, 1.6, 5.8, 0.92, 3.2, 1011],
-        [12, 2.8, 2.2, 18, 100, 2.5, 2.3, 0.25, 2.0, 2.2, 1.15, 3.3, 1000],
-        [14, 4.1, 2.7, 24, 101, 1.6, 0.7, 0.53, 1.4, 9.4, 0.61, 1.6, 560]
+    # 学習データとテストデータに分割
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+
+    # StandardScalerクラスのインスタンス化
+    scaler = StandardScaler()
+
+    # 標準化の変換モデルの生成
+    scaler.fit(X_train)
+
+    # スケールの変換
+    X_train_scaled = scaler.transform(X_train)
+
+    # 変換前の状態を表示
+    df_X_train = pd.DataFrame(X_train, columns=['所得', '築年数', '地域人口', '緯度', '経度', '部屋数', '寝室数'])
+    # val = f"変換前{df_X_train.head().to_html()}"
+
+    # 変換後の状態を表示
+    df_X_train_scaled = pd.DataFrame(X_train_scaled, columns=['所得', '築年数', '地域人口', '緯度', '経度', '部屋数', '寝室数'])
+    # val += f"変換後{df_X_train_scaled.head().to_html()}"
+
+    # 平均値と標準偏差を表示
+    # val += f"平均値と標準偏差{df_X_train_scaled.describe().to_html()}"
+
+    # テストデータのスケール変換
+    X_test_scaled = scaler.transform(X_test)
+
+    # 変換前の状態を表示
+    df_X_test= pd.DataFrame(X_test, columns=['所得', '築年数', '地域人口', '緯度', '経度', '部屋数', '寝室数'])
+    # val = f"変換前{df_X_test.head().to_html()}"
+
+    # 変換後の状態を表示
+    df_X_test_scaled = pd.DataFrame(X_test_scaled, columns=['所得', '築年数', '地域人口', '緯度', '経度', '部屋数', '寝室数'])
+    # val += f"変換後{df_X_test_scaled.head().to_html()}"
+
+    # 平均値と標準偏差を表示
+    # val += f"平均値と標準偏差{df_X_test_scaled.describe().to_html()}"
+
+    # modelに代入し学習
+    model = LinearRegression()
+    model.fit(X_train_scaled, y_train)
+
+    # 予測モデルの評価
+    # val = f"{model.score(X_train_scaled, y_train)}<br>"
+    # val += f"{str(model.score(X_test_scaled, y_test))}<br>"
+
+    # 予測
+    X_new = np.array([
+        [8, 41, 500, 37, -120, 1, 0.2],
+        [2, 10, 2000, 38, -122, 1.5, 0.5],
+        [1, 25, 1000, 38, -121, 2, 1],
     ])
+    X_new_scaled = scaler.transform(X_new)
+    pre = str(X_new_scaled)
+    pre += "\n------\n"
+    pre += str(model.predict(X_new_scaled))
 
-    # コンテキスト
-    template_name = "scikit-learn.html"
-    heading = 'scikit-learnとは'
-    val = model.score(X_test, y_test)
-    pre = model.predict(X_real).tolist()
-    # pre = y_pred.tolist() # 配列系はtolist()を記載しないとif文でエラーが発生
-    # pre = train_test_split(X, y , test_size=0.3, random_state=5)
-    url = ''
+    # 住宅価格の予測
+    # val += f"{model.intercept_}"
+    pre += "\n------\n"
+    pre += str(model.coef_)
 
-# --- seaborn
-class SeabornView(BaseContext, TemplateView):
-    # 教材コード
-    dataset = fetch_california_housing()
-    df = pd.DataFrame(dataset.data, columns=dataset.feature_names)
-    df['Price'] = dataset.target
-    feature_names_JPN = ['所得', '築年数', '部屋数', '寝室数', '地域人口', '世帯人数', '緯度', '経度', '住宅価格']
-    df.columns = feature_names_JPN
-
-    # dfのheadをHTML形式で取得
-    val = f"{df.shape}{df.describe().to_html()}"
-
-    # df.info()の出力をキャプチャ
-    buffer = StringIO()
-    df.info(buf=buffer)
-    pre = buffer.getvalue()
+    # プロット用のデータ（棒グラフ）
+    x_labels = ['所得', '築年数', '地域人口', '緯度', '経度', '部屋数/人', '寝室数/人']
+    y_values = model.coef_
 
     # 画像をバイト配列に保存
     # plt.figure(figsize=(12, 10))
+    fig, ax = plt.subplots(1, 2, figsize=(16, 8))  # 1行2列のサブプロット
 
     # プロット（編集箇所）
-    # df.hist(bins=30, figsize=(12, 10))
-    sns.stripplot(x='地域人口', data=df)
+    # sns.barplot(x=x_labels, y=y_values, palette="Set2")
+
+    # 最初の散布図（部屋数/人 vs 寝室数/人）
+    sns.scatterplot(x='部屋数/人', y='寝室数/人', data=df, ax=ax[0], color='blue')
+    ax[0].set_title('部屋数/人 vs 寝室数/人')
+
+    # 2つ目の散布図（経度 vs 緯度）
+    sns.scatterplot(x='経度', y='緯度', data=df, ax=ax[1], color='red')
+    ax[1].set_title('経度 vs 緯度')
+
+    # 凡例を追加
+    # plt.legend()
 
     # プロット実行
     plt.tight_layout()
@@ -183,11 +145,11 @@ class SeabornView(BaseContext, TemplateView):
     buffer = io.BytesIO()
     plt.savefig(buffer, format='png')
     buffer.seek(0)
-    string = base64.b64encode(buffer.read())
+    string = base64.b64encode(buffer.read()).decode('utf-8')  # Base64エンコード
 
     # コンテキスト
-    template_name = "seaborn.html"
-    heading = 'seabornとは'
+    template_name = "common.html"
+    heading = '回帰の手法を学ぼう(2)'
     val = val
     pre = pre
     url = 'data:image/png;base64,' + urllib.parse.quote(string)

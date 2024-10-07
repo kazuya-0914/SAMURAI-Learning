@@ -21,12 +21,18 @@
     </main>
 
     <footer class="p-3 text-center">
-      <a href="{% url 'top' %}" class="me-2 btn btn-primary">メニュー</a>
-      <a href="{% url 'numpy' %}" class="me-2 btn btn-primary">NumPy</a>
-      <a href="{% url 'matplotlib' %}" class="me-2 btn btn-primary">Matplotlib</a>
-      <a href="{% url 'pandas' %}" class="me-2 btn btn-primary">pandas</a>
-      <a href="{% url 'scikit-learn' %}" class="me-2 btn btn-primary">scikit-learn</a>
-      <a href="{% url 'seaborn' %}" class="me-2 btn btn-primary">seaborn</a>
+      <div class="mb-3">
+        <a href="{% url 'top' %}" class="me-2 btn btn-primary">メニュー</a>
+        <a href="{% url 'numpy' %}" class="me-2 btn btn-primary">NumPy</a>
+        <a href="{% url 'matplotlib' %}" class="me-2 btn btn-primary">Matplotlib</a>
+        <a href="{% url 'pandas' %}" class="me-2 btn btn-primary">pandas</a>
+        <a href="{% url 'scikit-learn' %}" class="me-2 btn btn-primary">scikit-learn</a>
+      </div>
+      <div>
+        <a href="{% url 'seaborn' %}" class="me-2 btn btn-primary">seaborn</a>
+        <a href="{% url 'regression-1' %}" class="me-2 btn btn-primary">回帰の手法(1)</a>
+        <a href="{% url 'regression-2' %}" class="me-2 btn btn-primary">回帰の手法(2)</a>
+      </div>
     </footer>
   </div>
 {% bootstrap_javascript %}

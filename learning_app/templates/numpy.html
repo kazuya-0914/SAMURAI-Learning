@@ -4,7 +4,7 @@
 {% if val %}
 <section class="p-3 mb-3 border border-info">
   <h4 class="mb-2 text-decoration-underline">通常処理</h4>
-  {{ val }}
+  {{ val|safe }}
 </section>
 {% endif %}
 
@@ -12,7 +12,7 @@
 <section class="p-3 mb-3 border border-info">
   <h4 class="mb-2 text-decoration-underline">preタグ処理</h4>
   <pre>
-{{ pre }}
+{{ pre|safe }}
   </pre>
 </section>
 {% endif %}
