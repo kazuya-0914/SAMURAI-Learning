@@ -62,7 +62,7 @@ class Regression_1_View(BaseContext, TemplateView):
     plt.figure(figsize=(12, 10))
 
     # プロット（編集箇所）
-    sns.barplot(x=x_labels, y=y_values, palette="Set2")
+    sns.barplot(x=x_labels, y=y_values, hue=x_labels, palette="Set2")
 
     # プロット実行
     plt.tight_layout()
@@ -74,7 +74,6 @@ class Regression_1_View(BaseContext, TemplateView):
     string = base64.b64encode(buffer.read()).decode('utf-8')  # Base64エンコード
 
     # コンテキスト
-    template_name = "common.html"
     heading = '回帰の手法を学ぼう(1)'
     val = val
     pre = pre

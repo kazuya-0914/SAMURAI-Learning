@@ -57,7 +57,6 @@ class SeabornView(BaseContext, TemplateView):
     string = base64.b64encode(buffer.read())
 
     # コンテキスト
-    template_name = "common.html"
     heading = 'seabornとは'
     val = val
     pre = pre

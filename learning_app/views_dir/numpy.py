@@ -9,7 +9,6 @@ import os
 
 # --- NumPy   
 class NumPyView(BaseContext, TemplateView):
-    template_name = "numpy.html"
     heading = 'NumPyとは'
     val = ''
     pre = ''

@@ -6,6 +6,9 @@ from .views_dir.pandas import PandasView
 from .views_dir.scikit_learn import ScikitLearnView
 from .views_dir.seaborn import SeabornView
 from .views_dir.regression_1 import Regression_1_View
+from .views_dir.regression_2 import Regression_2_View
+from .views_dir.categorize import CategorizeView
+from .views_dir.clustering import ClusteringView
 from . import views
 
 urlpatterns = [
@@ -17,5 +20,7 @@ urlpatterns = [
     path('scikit-learn/', ScikitLearnView.as_view(), name='scikit-learn'),
     path('seaborn/', SeabornView.as_view(), name='seaborn'),
     path('regression-1/', Regression_1_View.as_view(), name='regression-1'),
-    path('regression-2/', views.Regression_2_View.as_view(), name='regression-2'),
+    path('regression-2/', Regression_2_View.as_view(), name='regression-2'),
+    path('categorize/', CategorizeView.as_view(), name='categorize'),
+    path('clustering/', ClusteringView.as_view(), name='clustering'),
 ]

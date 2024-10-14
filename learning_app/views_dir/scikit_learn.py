@@ -27,7 +27,6 @@ class ScikitLearnView(BaseContext, TemplateView):
     ])
 
     # コンテキスト
-    template_name = "common.html"
     heading = 'scikit-learnとは'
     val = model.score(X_test, y_test)
     pre = model.predict(X_real).tolist()

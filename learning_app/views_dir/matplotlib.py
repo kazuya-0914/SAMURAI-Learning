@@ -37,7 +37,6 @@ class MatplotlibView(BaseContext, TemplateView):
     string = base64.b64encode(buffer.read())
 
     # コンテキスト
-    template_name = "common.html"
     heading = 'Matplotlibとは'
     val = ''
     pre = ''

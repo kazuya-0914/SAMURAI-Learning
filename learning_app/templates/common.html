@@ -20,7 +20,11 @@
 {% if url %}
 <section class="p-3 border border-info">
   <h4 class="mb-2 text-decoration-underline">画像処理</h4>
-  <img id="plot" src="{{ url }}" alt="画像処理"> 
+  {% if current_path == '/numpy/' %}
+    <img src="{% url 'image' %}" alt="画像処理">
+  {% else %}
+    <img id="plot" src="{{ url }}" alt="画像処理">
+  {% endif %} 
 </section>
 {% endif %}
 {% endblock content %}
