@@ -9,6 +9,7 @@ from .views_dir.regression_1 import Regression_1_View
 from .views_dir.regression_2 import Regression_2_View
 from .views_dir.categorize import CategorizeView
 from .views_dir.clustering import ClusteringView
+from .views_dir.analysis_1 import Analysis_1_View
 from . import views
 
 urlpatterns = [
@@ -23,4 +24,6 @@ urlpatterns = [
     path('regression-2/', Regression_2_View.as_view(), name='regression-2'),
     path('categorize/', CategorizeView.as_view(), name='categorize'),
     path('clustering/', ClusteringView.as_view(), name='clustering'),
+    path('analysis-1/', Analysis_1_View.as_view(), name='analysis-1'),
+    path('analysis-2/', views.Analysis_2_View.as_view(), name='analysis-2'),
 ]
